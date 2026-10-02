@@ -1,0 +1,20 @@
+# Voz: microfone, STT (faster-whisper, com o Silero VAD embutido) e TTS local (Piper)
+sounddevice
+numpy
+faster-whisper
+piper-tts
+
+# Whisper na GPU (NVIDIA): DLLs do CUDA 12 / cuDNN 9 (~2 GB)
+nvidia-cublas-cu12
+nvidia-cudnn-cu12==9.*
+
+# Site (src/web): API + arquivos do frontend compilado (web/dist)
+fastapi
+uvicorn[standard]
+
+# LoL: MCP do OP.GG + API da Riot + API JSON do Lolalytics
+httpx
+python-dotenv
+
+# Gemini: entende o comando e traduz dicas
+google-genai

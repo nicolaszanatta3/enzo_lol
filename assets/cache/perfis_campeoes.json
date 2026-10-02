@@ -1,0 +1,1170 @@
+{
+ "1": {
+  "tags": [
+   "Mage",
+   "Support"
+  ],
+  "damage_type": "AP"
+ },
+ "2": {
+  "tags": [
+   "Fighter",
+   "Tank"
+  ],
+  "damage_type": "AD"
+ },
+ "3": {
+  "tags": [
+   "Tank",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "4": {
+  "tags": [
+   "Mage",
+   "Marksman"
+  ],
+  "damage_type": "AP"
+ },
+ "5": {
+  "tags": [
+   "Fighter",
+   "Tank"
+  ],
+  "damage_type": "AD"
+ },
+ "6": {
+  "tags": [
+   "Fighter",
+   "Tank"
+  ],
+  "damage_type": "AD"
+ },
+ "7": {
+  "tags": [
+   "Assassin",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "8": {
+  "tags": [
+   "Mage",
+   "Fighter"
+  ],
+  "damage_type": "AP"
+ },
+ "9": {
+  "tags": [
+   "Mage",
+   "Support"
+  ],
+  "damage_type": "AP"
+ },
+ "10": {
+  "tags": [
+   "Marksman",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "11": {
+  "tags": [
+   "Fighter",
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "12": {
+  "tags": [
+   "Tank",
+   "Support"
+  ],
+  "damage_type": "AP"
+ },
+ "13": {
+  "tags": [
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "14": {
+  "tags": [
+   "Tank",
+   "Fighter"
+  ],
+  "damage_type": "BOTH"
+ },
+ "15": {
+  "tags": [
+   "Marksman"
+  ],
+  "damage_type": "AD"
+ },
+ "16": {
+  "tags": [
+   "Support",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "17": {
+  "tags": [
+   "Marksman",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "18": {
+  "tags": [
+   "Marksman",
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "19": {
+  "tags": [
+   "Fighter",
+   "Tank"
+  ],
+  "damage_type": "BOTH"
+ },
+ "20": {
+  "tags": [
+   "Tank",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "21": {
+  "tags": [
+   "Marksman",
+   "Mage"
+  ],
+  "damage_type": "AD"
+ },
+ "22": {
+  "tags": [
+   "Marksman",
+   "Support"
+  ],
+  "damage_type": "AD"
+ },
+ "23": {
+  "tags": [
+   "Fighter",
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "24": {
+  "tags": [
+   "Fighter"
+  ],
+  "damage_type": "BOTH"
+ },
+ "25": {
+  "tags": [
+   "Support",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "26": {
+  "tags": [
+   "Support",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "27": {
+  "tags": [
+   "Tank",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "28": {
+  "tags": [
+   "Assassin",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "29": {
+  "tags": [
+   "Marksman",
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "30": {
+  "tags": [
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "31": {
+  "tags": [
+   "Tank",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "32": {
+  "tags": [
+   "Tank",
+   "Support"
+  ],
+  "damage_type": "AP"
+ },
+ "33": {
+  "tags": [
+   "Tank"
+  ],
+  "damage_type": "BOTH"
+ },
+ "34": {
+  "tags": [
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "35": {
+  "tags": [
+   "Assassin"
+  ],
+  "damage_type": "BOTH"
+ },
+ "36": {
+  "tags": [
+   "Tank",
+   "Fighter"
+  ],
+  "damage_type": "BOTH"
+ },
+ "37": {
+  "tags": [
+   "Support",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "38": {
+  "tags": [
+   "Assassin",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "39": {
+  "tags": [
+   "Fighter",
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "40": {
+  "tags": [
+   "Support",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "41": {
+  "tags": [
+   "Fighter"
+  ],
+  "damage_type": "AD"
+ },
+ "42": {
+  "tags": [
+   "Marksman",
+   "Mage"
+  ],
+  "damage_type": "AD"
+ },
+ "43": {
+  "tags": [
+   "Mage",
+   "Support"
+  ],
+  "damage_type": "AP"
+ },
+ "44": {
+  "tags": [
+   "Support",
+   "Tank"
+  ],
+  "damage_type": "BOTH"
+ },
+ "45": {
+  "tags": [
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "48": {
+  "tags": [
+   "Fighter",
+   "Tank"
+  ],
+  "damage_type": "AD"
+ },
+ "50": {
+  "tags": [
+   "Mage",
+   "Support"
+  ],
+  "damage_type": "AP"
+ },
+ "51": {
+  "tags": [
+   "Marksman"
+  ],
+  "damage_type": "AD"
+ },
+ "53": {
+  "tags": [
+   "Tank",
+   "Support"
+  ],
+  "damage_type": "BOTH"
+ },
+ "54": {
+  "tags": [
+   "Tank",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "55": {
+  "tags": [
+   "Assassin",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "56": {
+  "tags": [
+   "Fighter",
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "57": {
+  "tags": [
+   "Tank",
+   "Support"
+  ],
+  "damage_type": "AP"
+ },
+ "58": {
+  "tags": [
+   "Fighter",
+   "Tank"
+  ],
+  "damage_type": "AD"
+ },
+ "59": {
+  "tags": [
+   "Fighter",
+   "Tank"
+  ],
+  "damage_type": "AD"
+ },
+ "60": {
+  "tags": [
+   "Assassin",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "61": {
+  "tags": [
+   "Mage",
+   "Support"
+  ],
+  "damage_type": "AP"
+ },
+ "62": {
+  "tags": [
+   "Fighter",
+   "Tank"
+  ],
+  "damage_type": "AD"
+ },
+ "63": {
+  "tags": [
+   "Mage",
+   "Support"
+  ],
+  "damage_type": "AP"
+ },
+ "64": {
+  "tags": [
+   "Fighter",
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "67": {
+  "tags": [
+   "Marksman",
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "68": {
+  "tags": [
+   "Fighter",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "69": {
+  "tags": [
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "72": {
+  "tags": [
+   "Tank",
+   "Fighter"
+  ],
+  "damage_type": "BOTH"
+ },
+ "74": {
+  "tags": [
+   "Mage",
+   "Support"
+  ],
+  "damage_type": "AP"
+ },
+ "75": {
+  "tags": [
+   "Fighter",
+   "Tank"
+  ],
+  "damage_type": "AD"
+ },
+ "76": {
+  "tags": [
+   "Assassin",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "77": {
+  "tags": [
+   "Fighter",
+   "Tank"
+  ],
+  "damage_type": "BOTH"
+ },
+ "78": {
+  "tags": [
+   "Tank",
+   "Fighter"
+  ],
+  "damage_type": "AD"
+ },
+ "79": {
+  "tags": [
+   "Fighter",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "80": {
+  "tags": [
+   "Fighter",
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "81": {
+  "tags": [
+   "Marksman",
+   "Mage"
+  ],
+  "damage_type": "AD"
+ },
+ "82": {
+  "tags": [
+   "Fighter",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "83": {
+  "tags": [
+   "Fighter",
+   "Tank"
+  ],
+  "damage_type": "BOTH"
+ },
+ "84": {
+  "tags": [
+   "Assassin"
+  ],
+  "damage_type": "AP"
+ },
+ "85": {
+  "tags": [
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "86": {
+  "tags": [
+   "Fighter",
+   "Tank"
+  ],
+  "damage_type": "AD"
+ },
+ "89": {
+  "tags": [
+   "Tank",
+   "Support"
+  ],
+  "damage_type": "AP"
+ },
+ "90": {
+  "tags": [
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "91": {
+  "tags": [
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "92": {
+  "tags": [
+   "Fighter",
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "96": {
+  "tags": [
+   "Marksman",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "98": {
+  "tags": [
+   "Tank"
+  ],
+  "damage_type": "BOTH"
+ },
+ "99": {
+  "tags": [
+   "Mage",
+   "Support"
+  ],
+  "damage_type": "AP"
+ },
+ "101": {
+  "tags": [
+   "Mage",
+   "Support"
+  ],
+  "damage_type": "AP"
+ },
+ "102": {
+  "tags": [
+   "Fighter",
+   "Tank"
+  ],
+  "damage_type": "BOTH"
+ },
+ "103": {
+  "tags": [
+   "Mage",
+   "Assassin"
+  ],
+  "damage_type": "AP"
+ },
+ "104": {
+  "tags": [
+   "Marksman"
+  ],
+  "damage_type": "AD"
+ },
+ "105": {
+  "tags": [
+   "Assassin",
+   "Fighter"
+  ],
+  "damage_type": "AP"
+ },
+ "106": {
+  "tags": [
+   "Fighter",
+   "Tank"
+  ],
+  "damage_type": "BOTH"
+ },
+ "107": {
+  "tags": [
+   "Assassin",
+   "Fighter"
+  ],
+  "damage_type": "AD"
+ },
+ "110": {
+  "tags": [
+   "Marksman",
+   "Mage"
+  ],
+  "damage_type": "BOTH"
+ },
+ "111": {
+  "tags": [
+   "Tank",
+   "Support"
+  ],
+  "damage_type": "AP"
+ },
+ "112": {
+  "tags": [
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "113": {
+  "tags": [
+   "Tank"
+  ],
+  "damage_type": "BOTH"
+ },
+ "114": {
+  "tags": [
+   "Fighter",
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "115": {
+  "tags": [
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "117": {
+  "tags": [
+   "Support",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "119": {
+  "tags": [
+   "Marksman"
+  ],
+  "damage_type": "AD"
+ },
+ "120": {
+  "tags": [
+   "Fighter",
+   "Tank"
+  ],
+  "damage_type": "AD"
+ },
+ "121": {
+  "tags": [
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "122": {
+  "tags": [
+   "Fighter",
+   "Tank"
+  ],
+  "damage_type": "AD"
+ },
+ "126": {
+  "tags": [
+   "Fighter",
+   "Marksman"
+  ],
+  "damage_type": "AD"
+ },
+ "127": {
+  "tags": [
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "131": {
+  "tags": [
+   "Fighter",
+   "Assassin"
+  ],
+  "damage_type": "AP"
+ },
+ "133": {
+  "tags": [
+   "Marksman",
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "134": {
+  "tags": [
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "136": {
+  "tags": [
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "141": {
+  "tags": [
+   "Fighter",
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "142": {
+  "tags": [
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "143": {
+  "tags": [
+   "Mage",
+   "Support"
+  ],
+  "damage_type": "AP"
+ },
+ "145": {
+  "tags": [
+   "Marksman",
+   "Mage"
+  ],
+  "damage_type": "BOTH"
+ },
+ "147": {
+  "tags": [
+   "Support",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "150": {
+  "tags": [
+   "Fighter",
+   "Tank"
+  ],
+  "damage_type": "AD"
+ },
+ "154": {
+  "tags": [
+   "Tank",
+   "Fighter"
+  ],
+  "damage_type": "AP"
+ },
+ "157": {
+  "tags": [
+   "Fighter",
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "161": {
+  "tags": [
+   "Mage",
+   "Support"
+  ],
+  "damage_type": "AP"
+ },
+ "163": {
+  "tags": [
+   "Mage",
+   "Support"
+  ],
+  "damage_type": "AP"
+ },
+ "164": {
+  "tags": [
+   "Fighter",
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "166": {
+  "tags": [
+   "Marksman",
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "200": {
+  "tags": [
+   "Fighter"
+  ],
+  "damage_type": "AD"
+ },
+ "201": {
+  "tags": [
+   "Tank",
+   "Support"
+  ],
+  "damage_type": "AP"
+ },
+ "202": {
+  "tags": [
+   "Marksman",
+   "Mage"
+  ],
+  "damage_type": "AD"
+ },
+ "203": {
+  "tags": [
+   "Marksman"
+  ],
+  "damage_type": "AD"
+ },
+ "221": {
+  "tags": [
+   "Marksman"
+  ],
+  "damage_type": "AD"
+ },
+ "222": {
+  "tags": [
+   "Marksman"
+  ],
+  "damage_type": "AD"
+ },
+ "223": {
+  "tags": [
+   "Tank",
+   "Support"
+  ],
+  "damage_type": "AP"
+ },
+ "233": {
+  "tags": [
+   "Fighter",
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "234": {
+  "tags": [
+   "Fighter",
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "235": {
+  "tags": [
+   "Support",
+   "Marksman"
+  ],
+  "damage_type": "AD"
+ },
+ "236": {
+  "tags": [
+   "Marksman",
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "238": {
+  "tags": [
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "240": {
+  "tags": [
+   "Fighter"
+  ],
+  "damage_type": "AD"
+ },
+ "245": {
+  "tags": [
+   "Assassin",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "246": {
+  "tags": [
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "254": {
+  "tags": [
+   "Fighter",
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "266": {
+  "tags": [
+   "Fighter"
+  ],
+  "damage_type": "AD"
+ },
+ "267": {
+  "tags": [
+   "Support",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "268": {
+  "tags": [
+   "Mage",
+   "Marksman"
+  ],
+  "damage_type": "AP"
+ },
+ "350": {
+  "tags": [
+   "Support",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "360": {
+  "tags": [
+   "Marksman",
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "412": {
+  "tags": [
+   "Support",
+   "Tank"
+  ],
+  "damage_type": "AP"
+ },
+ "420": {
+  "tags": [
+   "Fighter",
+   "Tank"
+  ],
+  "damage_type": "AD"
+ },
+ "421": {
+  "tags": [
+   "Fighter",
+   "Tank"
+  ],
+  "damage_type": "AD"
+ },
+ "427": {
+  "tags": [
+   "Support",
+   "Mage"
+  ],
+  "damage_type": "BOTH"
+ },
+ "429": {
+  "tags": [
+   "Marksman"
+  ],
+  "damage_type": "AD"
+ },
+ "432": {
+  "tags": [
+   "Support",
+   "Mage"
+  ],
+  "damage_type": "BOTH"
+ },
+ "497": {
+  "tags": [
+   "Support"
+  ],
+  "damage_type": "AP"
+ },
+ "498": {
+  "tags": [
+   "Marksman"
+  ],
+  "damage_type": "AD"
+ },
+ "516": {
+  "tags": [
+   "Tank"
+  ],
+  "damage_type": "BOTH"
+ },
+ "517": {
+  "tags": [
+   "Mage",
+   "Assassin"
+  ],
+  "damage_type": "AP"
+ },
+ "518": {
+  "tags": [
+   "Mage",
+   "Support"
+  ],
+  "damage_type": "AP"
+ },
+ "523": {
+  "tags": [
+   "Marksman"
+  ],
+  "damage_type": "AD"
+ },
+ "526": {
+  "tags": [
+   "Tank",
+   "Support"
+  ],
+  "damage_type": "AP"
+ },
+ "555": {
+  "tags": [
+   "Support",
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "711": {
+  "tags": [
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "777": {
+  "tags": [
+   "Fighter",
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "799": {
+  "tags": [
+   "Fighter",
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "800": {
+  "tags": [
+   "Mage",
+   "Support"
+  ],
+  "damage_type": "AP"
+ },
+ "804": {
+  "tags": [
+   "Marksman"
+  ],
+  "damage_type": "BOTH"
+ },
+ "805": {
+  "tags": [
+   "Assassin",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "875": {
+  "tags": [
+   "Fighter",
+   "Tank"
+  ],
+  "damage_type": "AD"
+ },
+ "876": {
+  "tags": [
+   "Fighter",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "887": {
+  "tags": [
+   "Fighter"
+  ],
+  "damage_type": "AP"
+ },
+ "888": {
+  "tags": [
+   "Support",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "893": {
+  "tags": [
+   "Mage",
+   "Assassin"
+  ],
+  "damage_type": "AP"
+ },
+ "895": {
+  "tags": [
+   "Fighter",
+   "Assassin"
+  ],
+  "damage_type": "AD"
+ },
+ "897": {
+  "tags": [
+   "Tank",
+   "Fighter"
+  ],
+  "damage_type": "AD"
+ },
+ "901": {
+  "tags": [
+   "Marksman",
+   "Mage"
+  ],
+  "damage_type": "AD"
+ },
+ "902": {
+  "tags": [
+   "Support",
+   "Mage"
+  ],
+  "damage_type": "AP"
+ },
+ "904": {
+  "tags": [
+   "Fighter"
+  ],
+  "damage_type": "AD"
+ },
+ "910": {
+  "tags": [
+   "Mage",
+   "Support"
+  ],
+  "damage_type": "AP"
+ },
+ "950": {
+  "tags": [
+   "Assassin",
+   "Fighter"
+  ],
+  "damage_type": "AD"
+ }
+}

@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Chakra Petch", ui-sans-serif, system-ui, sans-serif;
+
+  /* Fundo: quase preto puxado pro roxo. */
+  --color-void-950: #06030c;
+  --color-void-900: #0c0718;
+  --color-void-800: #140c26;
+  --color-void-700: #1e1338;
+  --color-void-600: #2a1b4d;
+
+  --animate-drift-a: drift-a 26s ease-in-out infinite;
+  --animate-drift-b: drift-b 32s ease-in-out infinite;
+  --animate-drift-c: drift-c 38s ease-in-out infinite;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-glow: glow 3.2s ease-in-out infinite;
+
+  @keyframes drift-a {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(10vw, 8vh) scale(1.15); }
+  }
+  @keyframes drift-b {
+    0%, 100% { transform: translate(0, 0) scale(1.1); }
+    50% { transform: translate(-12vw, -6vh) scale(0.9); }
+  }
+  @keyframes drift-c {
+    0%, 100% { transform: translate(0, 0) scale(0.95); }
+    50% { transform: translate(6vw, -10vh) scale(1.2); }
+  }
+  @keyframes shimmer {
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
+  }
+  @keyframes glow {
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 1; }
+  }
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    background-color: var(--color-void-950);
+    scrollbar-color: var(--color-void-600) transparent;
+  }
+  body {
+    @apply min-h-dvh font-sans text-violet-50 antialiased;
+  }
+  ::selection {
+    @apply bg-fuchsia-500/40 text-white;
+  }
+}

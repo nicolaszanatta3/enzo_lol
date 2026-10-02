@@ -1,0 +1,18 @@
+# Segredos e dados pessoais (modelo em .env.example)
+.env
+
+# Python
+__pycache__/
+*.pyc
+venv/
+
+# Frontend
+web/node_modules/
+web/dist/
+
+# Modelos de voz do Piper (~61 MB cada; ver README)
+assets/tts/*.onnx
+
+# Vozes da URA (projeto PABX, nao e' do Enzo)
+vozes_ura/
+vozes_ura.zip
