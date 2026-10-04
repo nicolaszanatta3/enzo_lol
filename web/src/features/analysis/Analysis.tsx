@@ -37,6 +37,7 @@ export function Analysis({ champion, position, tab, onTabChange: setTab }: Analy
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.target instanceof HTMLInputElement || event.metaKey || event.ctrlKey || event.altKey) return
+      if (document.querySelector('dialog[open]')) return // o modal do confronto tem as próprias abas
       const index = Number(event.key) - 1
       if (TABS[index]) setTab(TABS[index].id)
     }
@@ -49,14 +50,14 @@ export function Analysis({ champion, position, tab, onTabChange: setTab }: Analy
   let content: ReactNode
   if (tab === 'counters') {
     content = counters.error ? <ErrorState message={counters.error} onRetry={counters.retry} />
-      : counters.data ? <CountersPanel data={counters.data} championName={champion.name} /> : <CountersSkeleton />
+      : counters.data ? <CountersPanel data={counters.data} champion={champion} position={position} /> : <CountersSkeleton />
   } else if (tab === 'bans') {
     content = bans.error ? <ErrorState message={bans.error} onRetry={bans.retry} />
       : bans.data ? <BansPanel bans={bans.data} championName={champion.name} /> : <BansSkeleton />
   } else {
     content = build.error ? <ErrorState message={build.error} onRetry={build.retry} />
       : !build.data ? (tab === 'build' ? <BuildSkeleton /> : <RunesSkeleton />)
-      : tab === 'build' ? <BuildPanel build={build.data} /> : <RunesPanel runes={build.data.runes} />
+      : tab === 'build' ? <BuildPanel build={build.data} /> : <RunesPanel pages={build.data.runes} />
   }
 
   return (

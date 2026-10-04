@@ -1,5 +1,8 @@
 """Site do Enzo: escolhe o campeao e a rota e ve counters, bans, build e runas.
 
+Clicar num counter abre o confronto: build e runas so' daquele duelo, dica
+traduzida e o que o adversario faz.
+
 Rodar (a partir da raiz do projeto):
     python -m src.web.server          # abre http://127.0.0.1:8000 no navegador
 
@@ -20,11 +23,12 @@ from fastapi.staticfiles import StaticFiles
 from src.core import config
 from src.lol import champions, lolalytics
 from src.lol.advisor import CounterAdvisor, CounterPick, Source, personal_summary
-from src.lol.builds import Build, BuildAdvisor, Option
+from src.lol.builds import Build, BuildAdvisor, Option, RunePage
 from src.lol.champions import SPOKEN_ALIASES, Champion
 from src.lol.draft import DraftAdvisor
 from src.lol.meta import POSITIONS, MetaAdvisor
 from src.lol.profiles import ProfileStore
+from src.lol.tips import TipTranslator
 from src.web.ddragon import SHARD_ROWS, DataDragon
 
 HOST, PORT = "127.0.0.1", 8000
@@ -40,7 +44,7 @@ meta = MetaAdvisor(mcp)
 draft = DraftAdvisor(counters_advisor, meta, ProfileStore(mcp))
 builds = BuildAdvisor(mcp)
 ddragon = DataDragon()
-
+tips = TipTranslator()
 
 
 def _warm_up() -> None:
@@ -165,16 +169,20 @@ def get_bans(champion_id: int, position: Position) -> list[dict]:
 
 # --- Build e runas -----------------------------------------------------------
 
-def _stats(option: Option) -> dict:
+def _stats(option: Option | RunePage) -> dict:
     return {"winRate": option.win_rate, "games": option.games, "pickRate": option.pick_rate}
 
 
-def _items(option: Option | None) -> dict | None:
-    if option is None:
-        return None
+def _items(option: Option) -> dict:
     items = ddragon.data().items
     return {"items": [{"id": i, **items.get(i, {"name": f"Item {i}", "icon": None, "gold": 0, "description": ""})}
                       for i in option.ids], **_stats(option)}
+
+
+def _spells(option: Option) -> dict:
+    spells = ddragon.data().spells
+    return {"spells": [{"id": s, **spells.get(s, {"name": f"Feitiço {s}", "icon": None, "description": ""})}
+                       for s in option.ids], **_stats(option)}
 
 
 def _rune(rune_id: int, selected: bool) -> dict:
@@ -193,16 +201,37 @@ def _tree(tree_id: int, chosen: list[int], skip_keystone: bool) -> dict | None:
     }
 
 
-def _runes(build: Build) -> dict | None:
-    runes = build.runes
-    if runes is None:
-        return None
+def _rune_page(page: RunePage) -> dict:
     return {
-        "primary": _tree(runes.primary_tree, runes.primary, skip_keystone=False),
-        "secondary": _tree(runes.secondary_tree, runes.secondary, skip_keystone=True),
-        "shards": [[_rune(r, i < len(runes.shards) and runes.shards[i] == r) for r in row]
+        "label": page.label,
+        "primary": _tree(page.primary_tree, page.primary, skip_keystone=False),
+        "secondary": _tree(page.secondary_tree, page.secondary, skip_keystone=True),
+        "shards": [[_rune(r, i < len(page.shards) and page.shards[i] == r) for r in row]
                    for i, row in enumerate(SHARD_ROWS)],
-        "winRate": runes.win_rate, "games": runes.games, "pickRate": runes.pick_rate,
+        **_stats(page),
+    }
+
+
+def _build_payload(champion: Champion, build: Build) -> dict:
+    """Formato que o site usa pra build geral e pra do confronto."""
+    skills = None
+    reference = build.skill_order or build.skill_priority
+    if reference:
+        skills = {
+            "abilities": ddragon.champion_spells(champion.id),
+            "order": build.skill_order.ids if build.skill_order else [],
+            "priority": build.skill_priority.ids if build.skill_priority else [],
+            **_stats(reference),
+        }
+    return {
+        "starter": [_items(o) for o in build.starters],
+        "boots": [_items(o) for o in build.boots],
+        "core": [_items(o) for o in build.core],
+        "situational": [{"slot": f"{n}º item", "options": [_items(o) for o in options]}
+                        for n, options in enumerate(build.item_slots, 1) if options],
+        "spells": [_spells(o) for o in build.spells],
+        "skills": skills,
+        "runes": [page for page in map(_rune_page, build.runes) if page["primary"]],
     }
 
 
@@ -221,43 +250,66 @@ def get_build(champion_id: int, position: Position) -> dict:
     champion = _champion(champion_id)
     try:
         build = builds.build(champion, position)
-        data = ddragon.data()
-        abilities = ddragon.champion_spells(champion.id)
+        payload = _build_payload(champion, build)
     except Exception as exc:
         raise _fail(f"a build de {champion.name}", exc)
-
-    spells = None
-    if build.spells:
-        spells = {"spells": [{"id": s, **data.spells.get(s, {"name": f"Feitiço {s}", "icon": None,
-                                                              "description": ""})}
-                             for s in build.spells.ids], **_stats(build.spells)}
-    skills = None
-    if build.skill_order or build.skill_priority:
-        reference = build.skill_order or build.skill_priority
-        skills = {
-            "abilities": abilities,
-            "order": build.skill_order.ids if build.skill_order else [],
-            "priority": build.skill_priority.ids if build.skill_priority else [],
-            **_stats(reference),
-        }
     return {
         "stats": {
             "tier": build.tier, "rank": build.rank, "winRate": build.win_rate,
             "pickRate": build.pick_rate, "banRate": build.ban_rate, "kda": build.kda,
             "games": build.games, "lolalyticsTier": _lolalytics_tier(champion, position),
         },
-        "starter": _items(build.starter),
-        "boots": _items(build.boots),
-        "core": _items(build.core),
-        "situational": [
-            {"slot": slot, "options": [_items(o) for o in options]}
-            for slot, options in (("4º item", build.fourth), ("5º item", build.fifth), ("6º item", build.sixth))
-            if options
-        ],
-        "spells": spells,
-        "skills": skills,
-        "runes": _runes(build),
+        **payload,
     }
+
+
+# --- Confronto -----------------------------------------------------------------
+
+def _side(name: str | None, mine: Champion, enemy: Champion) -> str | None:
+    """Nome que o OP.GG da' pra quem leva vantagem -> "me" ou "enemy"."""
+    if not name:
+        return None
+    target = champions.by_name(mcp, name)
+    return "me" if target == mine else "enemy" if target == enemy else None
+
+
+@app.get("/api/matchup/{champion_id}/{enemy_id}/{position}")
+def get_matchup(champion_id: int, enemy_id: int, position: Position) -> dict:
+    champion, enemy = _champion(champion_id), _champion(enemy_id)
+    try:
+        matchup = builds.matchup(champion, enemy, position)
+        build = _build_payload(champion, matchup.build)
+        abilities = ddragon.champion_spells(enemy.id)
+        enemy_tips = ddragon.champion_tips(enemy.id)["enemy"]
+    except Exception as exc:
+        raise _fail(f"o confronto contra {enemy.name}", exc)
+    return {
+        "guide": {
+            "games": matchup.games,
+            "myWinRate": matchup.win_rate,
+            "playStyle": matchup.play_style,
+            "laneAdvantage": _side(matchup.lane_advantage, champion, enemy),
+            "soloKillAdvantage": _side(matchup.solo_kill_advantage, champion, enemy),
+            "hasTip": bool(matchup.tip),
+        },
+        "enemy": {"abilities": abilities, "tips": enemy_tips},
+        "build": build,
+    }
+
+
+@app.get("/api/matchup/{champion_id}/{enemy_id}/{position}/tip")
+def get_matchup_tip(champion_id: int, enemy_id: int, position: Position) -> dict:
+    """A dica do OP.GG traduzida (LLM, ~1-3s na primeira vez): rota separada pra
+    nao segurar a build. Sem LLM, devolve o original em ingles."""
+    champion, enemy = _champion(champion_id), _champion(enemy_id)
+    try:
+        tip = builds.matchup(champion, enemy, position).tip
+    except Exception as exc:
+        raise _fail(f"a dica contra {enemy.name}", exc)
+    if not tip:
+        return {"text": None, "translated": False}
+    translated = tips.translate(champion, enemy, position, tip)
+    return {"text": translated or tip, "translated": translated is not None}
 
 
 if DIST_DIR.exists():

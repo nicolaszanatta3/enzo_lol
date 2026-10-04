@@ -3,7 +3,8 @@
   - campeoes, itens, feiticos e arvores de runas: ddragon.leagueoflegends.com;
   - fragmentos de atributo (5001, 5005...) nao estao no Data Dragon: vem do
     CommunityDragon (perks.json), que tem todas as runas.
-Tudo e' baixado uma vez por execucao (na versao mais nova do jogo).
+Fica no cache em disco (src/core/cache.py): arquivos de uma versao nunca mudam;
+so' a lista de versoes e' conferida de tempos em tempos.
 """
 
 import re
@@ -12,9 +13,15 @@ from dataclasses import dataclass, field
 
 import httpx
 
+from src.core.cache import DAY, HOUR, cache, key
+
 DDRAGON = "https://ddragon.leagueoflegends.com"
 CDRAGON = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global"
 LANG = "pt_BR"
+
+VERSIONS_TTL = 6 * HOUR  # patch nova sai a cada ~2 semanas
+LATEST_TTL = DAY  # CommunityDragon "latest" muda junto com a patch
+VERSIONED_TTL = 30 * DAY  # /cdn/<versao>/... nunca muda
 
 # Fileiras de fragmentos da season atual: ataque, flex, defesa.
 SHARD_ROWS = [[5008, 5005, 5007], [5008, 5010, 5001], [5011, 5013, 5001]]
@@ -50,10 +57,13 @@ class DataDragon:
     def __init__(self):
         self._http = httpx.Client(timeout=20)
         self._data: StaticData | None = None
-        self._spells_by_champion: dict[int, list[dict]] = {}
         self._lock = threading.Lock()
 
     def _get(self, url: str):
+        ttl = VERSIONS_TTL if url.endswith("versions.json") else LATEST_TTL if "/latest/" in url else VERSIONED_TTL
+        return cache.get(key("ddragon", url), lambda: self._fetch(url), ttl=ttl)
+
+    def _fetch(self, url: str):
         response = self._http.get(url)
         response.raise_for_status()
         return response.json()
@@ -111,18 +121,28 @@ class DataDragon:
                                       "description": _plain(perk["shortDesc"])}
         return data
 
-    def champion_spells(self, champion_id: int) -> list[dict]:
-        """Passiva + Q, W, E, R do campeao (nome e icone)."""
-        cached = self._spells_by_champion.get(champion_id)
-        if cached is not None:
-            return cached
+    def _champion_detail(self, champion_id: int) -> tuple[str, dict]:
         data = self.data()
         key = data.champions[champion_id]["key"]
         base = f"{DDRAGON}/cdn/{data.version}"
-        detail = self._get(f"{base}/data/{LANG}/champion/{key}.json")["data"][key]
-        spells = [{"key": "P", "name": detail["passive"]["name"],
-                   "icon": f"{base}/img/passive/{detail['passive']['image']['full']}"}]
-        spells += [{"key": letter, "name": spell["name"], "icon": f"{base}/img/spell/{spell['image']['full']}"}
+        return base, self._get(f"{base}/data/{LANG}/champion/{key}.json")["data"][key]
+
+    def champion_spells(self, champion_id: int) -> list[dict]:
+        """Passiva + Q, W, E, R do campeao: nome, icone, recarga e descricao."""
+        base, detail = self._champion_detail(champion_id)
+        passive = detail["passive"]
+        spells = [{"key": "P", "name": passive["name"],
+                   "icon": f"{base}/img/passive/{passive['image']['full']}",
+                   "cooldown": None, "description": _plain(passive["description"])}]
+        spells += [{"key": letter, "name": spell["name"],
+                    "icon": f"{base}/img/spell/{spell['image']['full']}",
+                    "cooldown": spell.get("cooldownBurn") or None,
+                    "description": _plain(spell["description"])}
                    for letter, spell in zip("QWER", detail["spells"])]
-        self._spells_by_champion[champion_id] = spells
         return spells
+
+    def champion_tips(self, champion_id: int) -> dict[str, list[str]]:
+        """Dicas oficiais da Riot: "ally" pra quem joga com ele, "enemy" pra quem enfrenta."""
+        _, detail = self._champion_detail(champion_id)
+        return {"ally": [_plain(t) for t in detail.get("allytips") or []],
+                "enemy": [_plain(t) for t in detail.get("enemytips") or []]}

@@ -69,12 +69,19 @@ export interface Spell {
   description: string
 }
 
+export interface SpellSet extends Stats {
+  spells: Spell[]
+}
+
 export type AbilityKey = 'P' | 'Q' | 'W' | 'E' | 'R'
 
 export interface Ability {
   key: AbilityKey
   name: string
   icon: string
+  /** Recarga por nível ("26/23.5/21"); null na passiva. */
+  cooldown: string | null
+  description: string
 }
 
 export interface Rune {
@@ -90,7 +97,32 @@ export interface RuneTree {
   rows: Rune[][]
 }
 
-export interface BuildData {
+export interface RunePage extends Stats {
+  /** De onde veio a página ("Maior vitória · Lolalytics"); vazio no confronto. */
+  label: string
+  primary: RuneTree | null
+  secondary: RuneTree | null
+  shards: Rune[][]
+}
+
+export interface Skills extends Stats {
+  abilities: Ability[]
+  order: AbilityKey[]
+  priority: AbilityKey[]
+}
+
+/** Cada parte: a opção principal primeiro, depois as alternativas. */
+export interface BuildOptions {
+  starter: ItemSet[]
+  boots: ItemSet[]
+  core: ItemSet[]
+  situational: { slot: string; options: ItemSet[] }[]
+  spells: SpellSet[]
+  skills: Skills | null
+  runes: RunePage[]
+}
+
+export interface BuildData extends BuildOptions {
   stats: {
     tier: number
     rank: number
@@ -101,13 +133,28 @@ export interface BuildData {
     games: number
     lolalyticsTier: string | null
   }
-  starter: ItemSet | null
-  boots: ItemSet | null
-  core: ItemSet | null
-  situational: { slot: string; options: ItemSet[] }[]
-  spells: (Stats & { spells: Spell[] }) | null
-  skills: (Stats & { abilities: Ability[]; order: AbilityKey[]; priority: AbilityKey[] }) | null
-  runes: (Stats & { primary: RuneTree | null; secondary: RuneTree | null; shards: Rune[][] }) | null
+}
+
+export type Side = 'me' | 'enemy'
+
+export interface MatchupData {
+  guide: {
+    games: number
+    /** Winrate do jogador nesse confronto, pelo OP.GG. */
+    myWinRate: number | null
+    playStyle: 'aggressive' | 'defensive' | 'even' | null
+    laneAdvantage: Side | null
+    soloKillAdvantage: Side | null
+    hasTip: boolean
+  }
+  enemy: { abilities: Ability[]; tips: string[] }
+  build: BuildOptions
+}
+
+export interface MatchupTip {
+  text: string | null
+  /** false = nenhum LLM respondeu; veio o original em inglês. */
+  translated: boolean
 }
 
 // Uma requisição por URL, compartilhada entre componentes; quem já chegou
@@ -136,6 +183,14 @@ function fetchJson<T>(url: string): Promise<T> {
     pending.set(url, request)
   }
   return request as Promise<T>
+}
+
+export const matchupUrl = (championId: number, enemyId: number, position: Position) =>
+  `/api/matchup/${championId}/${enemyId}/${position}`
+
+/** Adianta uma busca (ex: hover num counter) sem mexer em tela nenhuma. */
+export function prefetch(url: string) {
+  if (!resolved.has(url)) fetchJson(url).catch(() => {})
 }
 
 interface ApiState<T> {

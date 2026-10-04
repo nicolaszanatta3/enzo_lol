@@ -16,3 +16,6 @@ assets/tts/*.onnx
 # Vozes da URA (projeto PABX, nao e' do Enzo)
 vozes_ura/
 vozes_ura.zip
+
+# Cache das APIs (src/core/cache.py)
+assets/cache/api.sqlite3*

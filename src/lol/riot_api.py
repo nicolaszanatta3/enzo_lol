@@ -3,6 +3,9 @@
 import httpx
 
 from src.core import config
+from src.core.cache import MINUTE, cache, key
+
+CACHE_TTL = 30 * MINUTE
 
 
 class RiotApiError(RuntimeError):
@@ -10,6 +13,10 @@ class RiotApiError(RuntimeError):
 
 
 def _get(url: str, params: dict | None = None):
+    return cache.get(key("riot", url, params or {}), lambda: _fetch(url, params), ttl=CACHE_TTL)
+
+
+def _fetch(url: str, params: dict | None):
     if not config.RIOT_API_KEY:
         raise RiotApiError("RIOT_API_KEY nao configurada no .env")
     response = httpx.get(

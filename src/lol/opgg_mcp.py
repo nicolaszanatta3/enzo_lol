@@ -23,8 +23,16 @@ import threading
 import httpx
 
 from src.core import config
+from src.core.cache import DAY, HOUR, MINUTE, cache, key
 
 PROTOCOL_VERSION = "2025-03-26"
+# Quanto tempo cada resposta vale sem atualizar (ver src/core/cache.py).
+TOOL_TTL = {
+    "lol_list_champions": DAY,
+    "lol_list_champion_details": 7 * DAY,
+    "lol_get_summoner_profile": 30 * MINUTE,
+}
+DEFAULT_TTL = 6 * HOUR  # estatisticas: mudam aos poucos dentro da patch
 
 
 class McpError(RuntimeError):
@@ -70,7 +78,12 @@ class OpggMcpClient:
             self._post({"jsonrpc": "2.0", "method": "notifications/initialized"})
 
     def call_tool(self, name: str, arguments: dict):
-        """Chama uma ferramenta e devolve o resultado ja convertido em dict/list."""
+        """Chama uma ferramenta e devolve o resultado ja convertido em dict/list
+        (do cache em disco, se ja' buscou essa mesma chamada)."""
+        return cache.get(key("opgg", name, arguments), lambda: self._call_tool(name, arguments),
+                         ttl=TOOL_TTL.get(name, DEFAULT_TTL))
+
+    def _call_tool(self, name: str, arguments: dict):
         self._ensure_session()
         payload = {
             "jsonrpc": "2.0",

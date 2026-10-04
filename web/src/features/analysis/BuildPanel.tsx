@@ -4,7 +4,7 @@ import { Card } from '../../components/ui/Card'
 import { GameIcon } from '../../components/ui/GameIcon'
 import { Skeleton } from '../../components/ui/Skeleton'
 import { Tooltip } from '../../components/ui/Tooltip'
-import type { AbilityKey, BuildData, Item, ItemSet, Stats } from '../../lib/api'
+import type { AbilityKey, BuildOptions, Item, ItemSet, Skills, Spell, Stats } from '../../lib/api'
 import { cn } from '../../lib/cn'
 import { num, pct, winRateTone } from '../../lib/format'
 
@@ -16,17 +16,18 @@ const SKILL_TONE: Record<AbilityKey, string> = {
   R: 'from-amber-300 to-orange-500',
 }
 
-export function BuildPanel({ build }: { build: BuildData }) {
-  const path: { label: string; set: ItemSet; icon: React.ReactNode }[] = []
-  if (build.starter) path.push({ label: 'Inicial', set: build.starter, icon: <Sword className="size-3.5" aria-hidden /> })
-  if (build.boots) path.push({ label: 'Botas', set: build.boots, icon: <Footprints className="size-3.5" aria-hidden /> })
-  if (build.core) path.push({ label: 'Core', set: build.core, icon: <Layers className="size-3.5" aria-hidden /> })
+export function BuildPanel({ build }: { build: BuildOptions }) {
+  const path: { label: string; options: ItemSet[]; icon: React.ReactNode; size: keyof typeof TILE_SIZE }[] = []
+  if (build.starter.length) path.push({ label: 'Inicial', options: build.starter, icon: <Sword className="size-3.5" aria-hidden />, size: 'md' })
+  if (build.boots.length) path.push({ label: 'Botas', options: build.boots, icon: <Footprints className="size-3.5" aria-hidden />, size: 'md' })
+  if (build.core.length) path.push({ label: 'Core', options: build.core, icon: <Layers className="size-3.5" aria-hidden />, size: 'lg' })
+  const [spells, ...otherSpells] = build.spells
 
   return (
     <div className="grid gap-4 xl:grid-cols-3">
       <Card title="Caminho principal" icon={<Layers className="size-4 text-fuchsia-300" aria-hidden />} className="xl:col-span-2">
-        <div className="flex flex-wrap items-start gap-x-2 gap-y-4">
-          {path.map(({ label, set, icon }, index) => (
+        <div className="flex flex-wrap items-start gap-x-2 gap-y-5">
+          {path.map(({ label, options: [main, ...alternatives], icon, size }, index) => (
             <motion.div
               key={label}
               initial={{ opacity: 0, y: 10 }}
@@ -41,47 +42,45 @@ export function BuildPanel({ build }: { build: BuildData }) {
                   {label}
                 </p>
                 <div className="flex gap-1.5">
-                  {set.items.map((item) => (
-                    <ItemTile key={item.id} item={item} size={label === 'Core' ? 'lg' : 'md'} />
+                  {main.items.map((item, i) => (
+                    <ItemTile key={`${item.id}-${i}`} item={item} size={size} />
                   ))}
                 </div>
-                <SetStats stats={set} />
+                <SetStats stats={main} />
+                <Alternatives options={alternatives} />
               </div>
             </motion.div>
           ))}
         </div>
       </Card>
 
-      {build.spells && (
+      {spells && (
         <Card title="Feitiços" icon={<WandSparkles className="size-4 text-fuchsia-300" aria-hidden />}>
           <div className="flex gap-2">
-            {build.spells.spells.map((spell) => (
-              <Tooltip
-                key={spell.id}
-                content={
-                  <>
-                    <p className="font-semibold text-white">{spell.name}</p>
-                    <p className="mt-1 line-clamp-5 text-violet-200/80">{spell.description}</p>
-                  </>
-                }
-              >
-                <span
-                  tabIndex={0}
-                  aria-label={spell.name}
-                  className="block rounded-xl ring-1 ring-violet-400/30 transition duration-200 hover:-translate-y-0.5 hover:ring-fuchsia-400 focus-visible:ring-2 focus-visible:ring-fuchsia-400 focus-visible:outline-none"
-                >
-                  <GameIcon src={spell.icon} alt={spell.name} className="size-14 rounded-xl" />
-                </span>
-              </Tooltip>
+            {spells.spells.map((spell) => (
+              <SpellTile key={spell.id} spell={spell} className="size-14 rounded-xl" />
             ))}
           </div>
-          <SetStats stats={build.spells} />
+          <SetStats stats={spells} />
+          {otherSpells.length > 0 && (
+            <ul className="mt-3 space-y-1.5 border-t border-white/5 pt-3" aria-label="Outras opções de feitiços">
+              {otherSpells.map((option) => (
+                <li key={option.spells.map((s) => s.id).join('-')} className="flex items-center gap-2">
+                  <span className="w-5 text-[11px] text-violet-400/70">ou</span>
+                  {option.spells.map((spell) => (
+                    <SpellTile key={spell.id} spell={spell} className="size-8 rounded-lg" />
+                  ))}
+                  <OptionStats stats={option} />
+                </li>
+              ))}
+            </ul>
+          )}
         </Card>
       )}
 
       {build.situational.length > 0 && (
-        <Card title="Situacionais" icon={<Sparkles className="size-4 text-fuchsia-300" aria-hidden />} className="xl:col-span-3">
-          <div className="grid gap-4 sm:grid-cols-3">
+        <Card title="Item a item" icon={<Sparkles className="size-4 text-fuchsia-300" aria-hidden />} className="xl:col-span-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {build.situational.map(({ slot, options }) => (
               <div key={slot}>
                 <p className="mb-2 text-[11px] font-semibold tracking-widest text-violet-300/70 uppercase">{slot}</p>
@@ -113,7 +112,55 @@ export function BuildPanel({ build }: { build: BuildData }) {
   )
 }
 
-function SkillOrder({ skills }: { skills: NonNullable<BuildData['skills']> }) {
+/** Outras opções pra mesma etapa, menores, embaixo da principal. */
+function Alternatives({ options }: { options: ItemSet[] }) {
+  if (options.length === 0) return null
+  return (
+    <ul className="mt-3 space-y-1.5 border-t border-white/5 pt-2.5" aria-label="Outras opções">
+      {options.map((option) => (
+        <li key={option.items.map((i) => i.id).join('-')} className="flex items-center gap-1.5">
+          <span className="w-5 text-[11px] text-violet-400/70">ou</span>
+          {option.items.map((item, i) => (
+            <ItemTile key={`${item.id}-${i}`} item={item} size="xs" />
+          ))}
+          <OptionStats stats={option} />
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+function OptionStats({ stats }: { stats: Stats }) {
+  return (
+    <span className="ml-1.5 text-[11px] whitespace-nowrap tabular-nums" title={`${num(stats.games)} partidas`}>
+      <span className={cn('font-semibold', winRateTone(stats.winRate))}>{pct(stats.winRate)}</span>
+      <span className="text-violet-300/60"> · {pct(stats.pickRate)}</span>
+    </span>
+  )
+}
+
+function SpellTile({ spell, className }: { spell: Spell; className: string }) {
+  return (
+    <Tooltip
+      content={
+        <>
+          <p className="font-semibold text-white">{spell.name}</p>
+          <p className="mt-1 line-clamp-5 text-violet-200/80">{spell.description}</p>
+        </>
+      }
+    >
+      <span
+        tabIndex={0}
+        aria-label={spell.name}
+        className="block rounded-xl ring-1 ring-violet-400/30 transition duration-200 hover:-translate-y-0.5 hover:ring-fuchsia-400 focus-visible:ring-2 focus-visible:ring-fuchsia-400 focus-visible:outline-none"
+      >
+        <GameIcon src={spell.icon} alt={spell.name} className={className} />
+      </span>
+    </Tooltip>
+  )
+}
+
+function SkillOrder({ skills }: { skills: Skills }) {
   const ability = (key: AbilityKey) => skills.abilities.find((a) => a.key === key)
   const rows: AbilityKey[] = ['Q', 'W', 'E', 'R']
   return (
@@ -189,7 +236,7 @@ function SkillOrder({ skills }: { skills: NonNullable<BuildData['skills']> }) {
   )
 }
 
-const TILE_SIZE = { sm: 'size-9', md: 'size-12', lg: 'size-14' }
+const TILE_SIZE = { xs: 'size-7', sm: 'size-9', md: 'size-12', lg: 'size-14' }
 
 function ItemTile({ item, size }: { item: Item; size: keyof typeof TILE_SIZE }) {
   return (

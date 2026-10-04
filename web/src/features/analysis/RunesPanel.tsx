@@ -1,11 +1,12 @@
 import { motion } from 'motion/react'
 import { Gem } from 'lucide-react'
+import { useState } from 'react'
 import { Card } from '../../components/ui/Card'
 import { GameIcon } from '../../components/ui/GameIcon'
 import { Skeleton } from '../../components/ui/Skeleton'
 import { EmptyState } from '../../components/ui/States'
 import { Tooltip } from '../../components/ui/Tooltip'
-import type { BuildData, Rune, RuneTree } from '../../lib/api'
+import type { Rune, RunePage, RuneTree } from '../../lib/api'
 import { cn } from '../../lib/cn'
 import { num, pct, winRateTone } from '../../lib/format'
 
@@ -20,24 +21,33 @@ const TREE_COLOR: Record<string, string> = {
 const SHARD_COLOR = '#c4b5fd'
 const SHARD_ROWS = ['Ataque', 'Flex', 'Defesa']
 
-export function RunesPanel({ runes }: { runes: BuildData['runes'] }) {
-  if (!runes || !runes.primary) {
+const treeColor = (tree: RuneTree | null) => (tree && TREE_COLOR[tree.tree.key]) ?? SHARD_COLOR
+const keystoneOf = (page: RunePage) => page.primary?.rows[0]?.find((rune) => rune.selected)
+
+export function RunesPanel({ pages, empty = 'O OP.GG ainda não tem runas com amostra suficiente pra essa rota.' }: {
+  pages: RunePage[]
+  empty?: string
+}) {
+  const [selected, setSelected] = useState(0)
+  const page = pages[selected] ?? pages[0]
+  if (!page?.primary) {
     return (
       <Card>
         <EmptyState icon={<Gem className="size-6" strokeWidth={1.75} aria-hidden />} title="Sem página de runas">
-          O OP.GG ainda não tem runas com amostra suficiente pra essa rota.
+          {empty}
         </EmptyState>
       </Card>
     )
   }
   return (
     <div className="space-y-3">
-      <div className="grid gap-4 lg:grid-cols-[1.25fr_1fr_0.8fr]">
-        <TreeCard tree={runes.primary} label="Principal" keystone delay={0} />
-        {runes.secondary && <TreeCard tree={runes.secondary} label="Secundária" delay={0.12} />}
+      {pages.length > 1 && <PagePicker pages={pages} selected={selected} onSelect={setSelected} />}
+      <div key={selected} className="grid gap-4 lg:grid-cols-[1.25fr_1fr_0.8fr]">
+        <TreeCard tree={page.primary} label="Principal" keystone delay={0} />
+        {page.secondary && <TreeCard tree={page.secondary} label="Secundária" delay={0.12} />}
         <Card title="Fragmentos" icon={<Gem className="size-4 text-violet-300" aria-hidden />}>
           <div className="space-y-4">
-            {runes.shards.map((row, index) => (
+            {page.shards.map((row, index) => (
               <div key={index}>
                 <p className="mb-2 text-[11px] font-semibold tracking-widest text-violet-300/60 uppercase">{SHARD_ROWS[index]}</p>
                 <div className="flex gap-3">
@@ -51,15 +61,64 @@ export function RunesPanel({ runes }: { runes: BuildData['runes'] }) {
         </Card>
       </div>
       <p className="text-xs text-violet-300/60 tabular-nums">
-        Página mais jogada: <span className={cn('font-semibold', winRateTone(runes.winRate))}>{pct(runes.winRate)} vitórias</span> em{' '}
-        {num(runes.games)} partidas ({pct(runes.pickRate)} dos jogadores).
+        <span className={cn('font-semibold', winRateTone(page.winRate))}>{pct(page.winRate)} vitórias</span> em {num(page.games)} partidas
+        ({pct(page.pickRate)} dos jogadores){page.label && ` · ${page.label}`}.
       </p>
     </div>
   )
 }
 
+function PagePicker({ pages, selected, onSelect }: { pages: RunePage[]; selected: number; onSelect: (index: number) => void }) {
+  return (
+    <div role="group" aria-label="Páginas de runas" className="grid gap-2 sm:grid-cols-3">
+      {pages.map((page, index) => {
+        const keystone = keystoneOf(page)
+        const color = treeColor(page.primary)
+        const active = index === selected
+        return (
+          <button
+            key={index}
+            type="button"
+            aria-pressed={active}
+            onClick={() => onSelect(index)}
+            className={cn(
+              'relative flex items-center gap-3 rounded-2xl border bg-void-900/85 p-2.5 pr-3 text-left',
+              'transition duration-200 ease-out focus-visible:ring-2 focus-visible:ring-fuchsia-400 focus-visible:outline-none',
+              active ? 'border-transparent' : 'border-violet-400/15 hover:border-violet-400/35 hover:bg-void-800/90',
+            )}
+            style={active ? { boxShadow: `inset 0 0 0 1.5px ${color}, 0 0 28px -10px ${color}` } : undefined}
+          >
+            <span className="relative shrink-0">
+              <GameIcon src={keystone?.icon ?? null} alt="" round className={cn('size-10 transition', !active && 'opacity-70')} />
+              {page.secondary && (
+                <GameIcon
+                  src={page.secondary.tree.icon}
+                  alt=""
+                  className="absolute -right-1 -bottom-1 size-5 rounded-full bg-void-950 p-0.5 ring-1 ring-white/10"
+                />
+              )}
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-sm font-semibold" style={{ color: active ? color : undefined }}>
+                {keystone?.name ?? page.primary?.tree.name}
+              </span>
+              <span className="block truncate text-[11px] text-violet-300/70">
+                {page.label || `${page.primary?.tree.name} + ${page.secondary?.tree.name}`}
+              </span>
+            </span>
+            <span className="text-right text-xs tabular-nums">
+              <span className={cn('block font-display font-semibold', winRateTone(page.winRate))}>{pct(page.winRate)}</span>
+              <span className="block text-violet-300/60">{pct(page.pickRate)}</span>
+            </span>
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
 function TreeCard({ tree, label, keystone, delay }: { tree: RuneTree; label: string; keystone?: boolean; delay: number }) {
-  const color = TREE_COLOR[tree.tree.key] ?? SHARD_COLOR
+  const color = treeColor(tree)
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
@@ -132,10 +191,17 @@ function RuneIcon({ rune, color, size, delay }: { rune: Rune; color: string; siz
 
 export function RunesSkeleton() {
   return (
-    <div className="grid gap-4 lg:grid-cols-[1.25fr_1fr_0.8fr]">
-      <Skeleton className="h-80 rounded-2xl" />
-      <Skeleton className="h-80 rounded-2xl" />
-      <Skeleton className="h-80 rounded-2xl" />
+    <div className="space-y-3">
+      <div className="grid gap-2 sm:grid-cols-3">
+        {[0, 1, 2].map((i) => (
+          <Skeleton key={i} className="h-16 rounded-2xl" />
+        ))}
+      </div>
+      <div className="grid gap-4 lg:grid-cols-[1.25fr_1fr_0.8fr]">
+        <Skeleton className="h-80 rounded-2xl" />
+        <Skeleton className="h-80 rounded-2xl" />
+        <Skeleton className="h-80 rounded-2xl" />
+      </div>
     </div>
   )
 }

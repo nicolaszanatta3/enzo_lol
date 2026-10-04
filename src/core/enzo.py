@@ -8,13 +8,11 @@ Teste sem microfone (a partir da raiz do projeto):
     python -m src.core.enzo "meu time e naafiri, vlad, jinx e lulu, o que pego?"
 """
 
-import json
 import sys
-import threading
 from concurrent.futures import Future, ThreadPoolExecutor
 from dataclasses import dataclass
 
-from src.ai import llm, router
+from src.ai import router
 from src.core import config
 from src.lol import champions
 from src.lol.advisor import CounterAdvisor, CounterPick, PoolChampion, best_from_pool, format_report
@@ -22,20 +20,10 @@ from src.lol.champions import Champion
 from src.lol.draft import BanTarget, DraftAdvisor, PickResult, format_bans, format_meta, format_pick
 from src.lol.meta import LaneEntry, MetaAdvisor
 from src.lol.profiles import NEED_LABELS, ProfileStore
-
-TIP_SYSTEM_PROMPT = (
-    "Traduza a dica de League of Legends para português do Brasil, com acentuação "
-    "correta, em no máximo duas frases curtas, naturais para falar em voz alta. "
-    "As marcações (X) são habilidades do adversário e [X] do campeão do jogador: "
-    "troque por 'o Q', 'o E', 'a ultimate' (R) ou 'a passiva' (P). "
-    "Não deixe colchetes nem parênteses. Só a dica, sem aspas."
-)
+from src.lol.tips import TipTranslator
 
 UNKNOWN_FALLBACK = ("Por enquanto eu manjo de counter, ban, meta da rota e pick pro seu time. "
                     "Pergunta uma dessas.")
-
-# Dicas ja traduzidas, pra nao gastar cota de LLM com o mesmo confronto.
-TIP_CACHE_PATH = config.ASSETS_DIR / "cache" / "dicas_traduzidas.json"
 
 
 @dataclass
@@ -53,11 +41,7 @@ class Enzo:
         self.meta = MetaAdvisor(self.mcp)
         self.draft = DraftAdvisor(self.advisor, self.meta, ProfileStore(self.mcp))
         self._background = ThreadPoolExecutor(max_workers=2)
-        self._tip_lock = threading.Lock()
-        try:
-            self._tip_cache: dict[str, str] = json.loads(TIP_CACHE_PATH.read_text(encoding="utf-8"))
-        except (FileNotFoundError, ValueError):
-            self._tip_cache = {}
+        self.tips = TipTranslator()
 
     def warm_up_in_background(self) -> Future:
         """Carrega lista de campeoes e pool do jogador sem bloquear ninguem.
@@ -216,26 +200,10 @@ class Enzo:
         )
 
     def _translated_tip(self, mine: Champion, enemy: Champion, position: str) -> str | None:
-        key = f"{mine.name}|{enemy.name}|{position}"
-        translated = self._tip_cache.get(key)
-        if translated is None:
-            tip = self.advisor.matchup_tip(mine, enemy, position)
-            if not tip:
-                return None
-            try:
-                translated = llm.generate_text(tip, TIP_SYSTEM_PROMPT)
-            except llm.LLMError:
-                return None  # dica em ingles nao ajuda falada; so pula
-            self._save_tip(key, translated)
-        return f"Dica de {mine.name}: {translated}"
-
-    def _save_tip(self, key: str, translated: str) -> None:
-        with self._tip_lock:
-            self._tip_cache[key] = translated
-            TIP_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
-            TIP_CACHE_PATH.write_text(
-                json.dumps(self._tip_cache, ensure_ascii=False, indent=1), encoding="utf-8"
-            )
+        tip = self.advisor.matchup_tip(mine, enemy, position)
+        translated = tip and self.tips.translate(mine, enemy, position, tip)
+        # Dica em ingles nao ajuda falada; sem traducao, so' pula.
+        return f"Dica de {mine.name}: {translated}" if translated else None
 
 
 def _percent(rate: float) -> str:
